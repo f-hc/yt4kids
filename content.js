@@ -28,36 +28,13 @@
   // --- Layer 3: Fallback DOM Observer ---
   // This remains as a final safety net.
   setupFallbackObserver();
+  observeSpaNavigations();
 
 
   // --- Helper Functions ---
 
   function isUrlBlocked(url) {
-    try {
-      const u = new URL(url);
-      if (!u.hostname.endsWith('youtube.com') && u.hostname !== 'youtu.be') {
-        return false;
-      }
-      if (u.pathname.startsWith('/shorts/')) {
-        const shortId = u.pathname.split('/shorts/')[1].split('/')[0];
-        if (BLOCKED_VIDEO_TITLE_KEYWORDS.includes(shortId)) return true;
-      }
-      if (u.pathname === '/watch') {
-        const videoId = u.searchParams.get('v');
-        if (BLOCKED_VIDEO_TITLE_KEYWORDS.includes(videoId)) return true;
-      }
-      if (u.pathname.startsWith('/channel/')) {
-        const channelId = u.pathname.split('/channel/')[1].split('/')[0];
-        if (BLOCKED_CHANNEL_IDS.includes(channelId)) return true;
-      }
-      if (u.pathname.startsWith('/@')) {
-        const handle = u.pathname.substring(1).split('/')[0];
-        if (BLOCKED_CHANNEL_NAMES.includes(handle)) return true;
-      }
-    } catch (e) {
-      // Ignore invalid URLs
-    }
-    return false;
+    return window.isUrlBlocked(url);
   }
 
   function blockAndRedirect(reason) {
@@ -113,6 +90,26 @@
     if (!text) return false;
     const lowerText = text.toLowerCase();
     return list.some(keyword => lowerText.includes(keyword.toLowerCase()));
+  }
+
+  function observeSpaNavigations() {
+    let lastUrl = window.location.href;
+
+    function checkUrlChange() {
+      const current = window.location.href;
+      if (current !== lastUrl) {
+        lastUrl = current;
+        if (isUrlBlocked(current)) {
+          blockAndRedirect(`SPA URL (${current})`);
+        }
+      }
+    }
+
+    // YouTube fires this custom event on client-side navigation.
+    window.addEventListener('yt-navigate-finish', checkUrlChange, true);
+
+    // Fallback: poll every second in case the custom event fails.
+    setInterval(checkUrlChange, 1000);
   }
 
 })(); 
