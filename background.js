@@ -2,7 +2,7 @@
 // This software is licensed under the MIT License - Commercial Restriction (MIT-CR).
 // For full license details, see the LICENSE file in the project root.
 
-// YouTube Kids Protection - Background Script
+// YT4Kids - Background Script
 // This script provides the first layer of protection by blocking navigation
 // to known bad URLs before the page even starts to load.
 
@@ -20,7 +20,6 @@ importScripts('blacklists.js');
     }
 
     if (shouldBlockUrl(details.url)) {
-      console.log(`YT Kids Protection (Background): Blocking navigation to ${details.url}`);
       // Replace the tab's content with the YouTube homepage.
       chrome.tabs.update(details.tabId, {
         url: 'https://www.youtube.com/'

@@ -2,16 +2,15 @@
 // This software is licensed under the MIT License - Commercial Restriction (MIT-CR).
 // For full license details, see the LICENSE file in the project root.
 
-// YouTube Kids Protection - Page Injector
+// YT4Kids - Page Injector
 // This script runs in the main page world to intercept YouTube's data variables.
 
 (() => {
   'use strict';
 
   // The blacklist data is passed from the content script via a DOM element.
-  const dataNode = document.getElementById('yt-kids-protection-data');
+  const dataNode = document.getElementById('yt4kids-data');
   if (!dataNode || !dataNode.dataset.blacklists) {
-    console.error('YT Kids Protection: Could not find blacklist data.');
     return;
   }
   const bl = JSON.parse(dataNode.dataset.blacklists);
@@ -33,7 +32,7 @@
     }
 
     if (reason) {
-      console.log(`YT Kids Protection (Interceptor): Blocking content from ${varName}. Reason: [${reason}]`);
+      console.log(`YT4Kids: Blocking content from ${varName}. Reason: [${reason}]`);
       window.stop();
       window.location.replace('https://www.youtube.com/');
     }
@@ -46,28 +45,6 @@
     if (title && contains(title, bl.videoTitle)) return `Video Title: ${title}`;
     if (channelId && bl.channelIds.includes(channelId)) return `Channel ID: ${channelId}`;
     if (author && (bl.channelNames.includes(author) || contains(author, bl.channelTitle))) return `Channel Name: ${author}`;
-    return false;
-  }
-
-  function isBlockedByInitialData(data) {
-    try {
-      const contents = data?.contents?.twoColumnWatchNextResults?.results?.results?.contents;
-      if (!contents) return false;
-
-      const primaryInfo = contents.find(c => c.videoPrimaryInfoRenderer)?.videoPrimaryInfoRenderer;
-      const secondaryInfo = contents.find(c => c.videoSecondaryInfoRenderer)?.videoSecondaryInfoRenderer;
-
-      const title = primaryInfo?.title?.runs?.[0]?.text;
-      const owner = secondaryInfo?.owner?.videoOwnerRenderer;
-      const channelName = owner?.title?.runs?.[0]?.text;
-      const channelId = owner?.navigationEndpoint?.browseEndpoint?.browseId;
-      
-      if (title && contains(title, bl.videoTitle)) return `Video Title (from ytInitialData): ${title}`;
-      if (channelId && bl.channelIds.includes(channelId)) return `Channel ID (from ytInitialData): ${channelId}`;
-      if (channelName && (bl.channelNames.includes(channelName) || contains(channelName, bl.channelTitle))) return `Channel Name (from ytInitialData): ${channelName}`;
-    } catch (e) {
-      // Ignore parsing errors, as this data structure can be inconsistent.
-    }
     return false;
   }
 

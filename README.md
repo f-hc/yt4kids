@@ -1,4 +1,4 @@
-# YouTube Kids Protection Extension
+# YT4Kids Extension
 
 A Chrome extension that protects children from inappropriate YouTube content by automatically redirecting from videos, shorts, and channels that match certain criteria.
 

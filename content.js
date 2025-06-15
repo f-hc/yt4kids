@@ -2,7 +2,7 @@
 // This software is licensed under the MIT License - Commercial Restriction (MIT-CR).
 // For full license details, see the LICENSE file in the project root.
 
-// YouTube Kids Protection - Content Script
+// YT4Kids - Content Script
 // This script uses a multi-layered approach to ensure reliable blocking.
 
 /* global BLOCKED_CHANNEL_TITLE_KEYWORDS, BLOCKED_VIDEO_TITLE_KEYWORDS,
@@ -61,7 +61,7 @@
   }
 
   function blockAndRedirect(reason) {
-    console.log(`YouTube Kids Protection: Blocking content and redirecting. Reason: [${reason}]`);
+    console.log(`YT4Kids: Blocking content and redirecting. Reason: [${reason}]`);
     window.stop();
     window.location.replace('https://www.youtube.com/');
   }
@@ -69,7 +69,7 @@
   function injectPageScriptWithData() {
     // 1. Create a DOM element to hold the blacklist data.
     const dataNode = document.createElement('div');
-    dataNode.id = 'yt-kids-protection-data';
+    dataNode.id = 'yt4kids-data';
     dataNode.dataset.blacklists = JSON.stringify({
       channelTitle: BLOCKED_CHANNEL_TITLE_KEYWORDS,
       videoTitle: BLOCKED_VIDEO_TITLE_KEYWORDS,
