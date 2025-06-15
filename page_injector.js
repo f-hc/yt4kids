@@ -71,6 +71,7 @@
   // the moment it's defined.
   let ytidChecked = false;
   let ytiprChecked = false;
+  const POLL_INTERVAL_MS = 10; // Reduced CPU usage while staying responsive.
   const poller = setInterval(() => {
     if (!ytidChecked && window.ytInitialData) {
       ytidChecked = true;
@@ -84,7 +85,7 @@
     if (ytidChecked && ytiprChecked) {
       clearInterval(poller);
     }
-  }, 1); // Poll every millisecond.
+  }, POLL_INTERVAL_MS);
 
   // As a safeguard, stop polling after a reasonable time to prevent
   // the interval from running forever on non-video pages.
