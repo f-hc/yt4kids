@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Kids Protection",
+  "version": "1.0",
+  "author": "f-hc",
+  "description": "Protects kids from inappropriate YouTube content",
+  "permissions": ["webNavigation", "tabs"],
+  "host_permissions": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
+      "js": ["blacklists.js", "content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["page_injector.js"],
+      "matches": ["*://*.youtube.com/*"]
+    }
+  ]
+} 
